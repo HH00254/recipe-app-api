@@ -24,7 +24,6 @@ JSON Response
 
 """
 
-
 # Import DRF ViewSets.
 #
 # ViewSets combine multiple API operations into one class.
@@ -39,8 +38,20 @@ JSON Response
 #
 # ModelViewSet provides them automatically.
 #
+# Import the database model.
+#
+# Recipe represents the table in PostgreSQL.
+#
+# Example:
+#
+# Recipe.objects.all()
+#
+# roughly becomes:
+#
+# SELECT * FROM recipe;
+#
+from core.models import Recipe
 from rest_framework import viewsets
-
 
 # TokenAuthentication allows DRF to identify
 # which user is making the request.
@@ -57,7 +68,6 @@ from rest_framework import viewsets
 #
 from rest_framework.authentication import TokenAuthentication
 
-
 # Permission classes decide who is allowed
 # to access this API.
 #
@@ -67,22 +77,6 @@ from rest_framework.authentication import TokenAuthentication
 # Anonymous user -> rejected (401)
 #
 from rest_framework.permissions import IsAuthenticated
-
-
-# Import the database model.
-#
-# Recipe represents the table in PostgreSQL.
-#
-# Example:
-#
-# Recipe.objects.all()
-#
-# roughly becomes:
-#
-# SELECT * FROM recipe;
-#
-from core.models import Recipe
-
 
 # Import serializer classes.
 #
@@ -94,7 +88,6 @@ from core.models import Recipe
 #        JSON
 #
 from recipe import serializers
-
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
@@ -133,7 +126,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
     """
 
-    
     # Tell the ViewSet which serializer controls
     # converting Recipe objects into JSON.
     #
@@ -155,8 +147,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
     #
     serializer_class = serializers.RecipeDetailSerializer
 
-
-
     # Base database query.
     #
     # This creates the starting queryset.
@@ -174,8 +164,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
     # "Run this SQL query"
     queryset = Recipe.objects.all()
 
-
-
     # Authentication method.
     #
     # When a request arrives:
@@ -190,11 +178,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     #
     # self.request.user
     #
-    authentication_classes = [
-        TokenAuthentication
-    ]
-
-
+    authentication_classes = [TokenAuthentication]
 
     # Security rule.
     #
@@ -206,11 +190,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     #
     # GET /recipes/
     #
-    permission_classes = [
-        IsAuthenticated
-    ]
-
-
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         """
@@ -265,18 +245,12 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
         """
 
-
         return (
             self.queryset
-
             # Filter recipes where the user column
             # matches whoever owns the token.
             #
-            .filter(
-                user=self.request.user
-            )
-
-
+            .filter(user=self.request.user)
             # Newest recipes first.
             #
             # -id means descending order:
@@ -285,10 +259,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
             # 9
             # 8
             #
-            .order_by('-id')
+            .order_by("-id")
         )
-
-
 
     def perform_create(self, serializer):
         """
@@ -331,9 +303,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
         """
 
-        serializer.save(
-            user=self.request.user
-        )
+        serializer.save(user=self.request.user)
 
     def get_serializer_class(self):
         """
@@ -352,10 +322,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
         """
 
-
-        if self.action == 'list':
+        if self.action == "list":
             return serializers.RecipeSerializer
 
         return self.serializer_class
-    
-    

@@ -3,12 +3,12 @@ Database models.
 """
 
 from django.conf import settings
-from django.db import models
 from django.contrib.auth.models import (
     AbstractBaseUser,
     BaseUserManager,
     PermissionsMixin,
 )  # noqa
+from django.db import models
 
 
 class UserManager(BaseUserManager):
@@ -18,20 +18,17 @@ class UserManager(BaseUserManager):
         """Create, save and return a new user."""
 
         if not email:
-            raise ValueError('User must have an email address.')
+            raise ValueError("User must have an email address.")
 
-        user = self.model(
-            email=self.normalize_email(email),
-            **extra_fields
-        )
+        user = self.model(email=self.normalize_email(email), **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
 
         return user
-    
+
     def create_superuser(self, email, password):
         """Create and return a new superuser."""
-        
+
         user = self.create_user(email, password)
         user.is_staff = True
         user.is_superuser = True
@@ -42,6 +39,7 @@ class UserManager(BaseUserManager):
 
 class User(AbstractBaseUser, PermissionsMixin):
     """Custom user model that supports using email instead of username."""
+
     email = models.EmailField(max_length=255, unique=True)
     name = models.CharField(max_length=255)
     is_active = models.BooleanField(default=True)
@@ -49,7 +47,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     objects = UserManager()
 
-    USERNAME_FIELD = 'email'
+    USERNAME_FIELD = "email"
 
 
 class Recipe(models.Model):
