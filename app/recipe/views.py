@@ -50,8 +50,8 @@ JSON Response
 #
 # SELECT * FROM recipe;
 #
-from core.models import Recipe
-from rest_framework import viewsets
+from core.models import Recipe, Tag
+from rest_framework import mixins, viewsets
 
 # TokenAuthentication allows DRF to identify
 # which user is making the request.
@@ -326,3 +326,24 @@ class RecipeViewSet(viewsets.ModelViewSet):
             return serializers.RecipeSerializer
 
         return self.serializer_class
+
+
+class TagViewSet(
+    mixins.DestroyModelMixin,
+    mixins.UpdateModelMixin,
+    mixins.ListModelMixin,
+    viewsets.GenericViewSet,
+):
+    """
+    Manage tags in the database
+    """
+
+    serializer_class = serializers.TagSerializer
+    queryset = Tag.objects.all()
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        """Filter querset to authenticated user."""
+
+        return self.queryset.filter(user=self.request.user).order_by("-name")
