@@ -2,13 +2,24 @@
 Database models.
 """
 
+import os
+import uuid
+
 from django.conf import settings
 from django.contrib.auth.models import (
     AbstractBaseUser,
     BaseUserManager,
     PermissionsMixin,
-)  # noqa
+)
 from django.db import models
+
+
+def recipe_image_file_path(instance, filename):
+    """Generate file path for new recipe image."""
+    ext = os.path.splitext(filename)[1]
+    filename = f"{uuid.uuid4()}{ext}"
+
+    return os.path.join("uploads", "recipe", filename)
 
 
 class UserManager(BaseUserManager):
@@ -16,10 +27,8 @@ class UserManager(BaseUserManager):
 
     def create_user(self, email, password=None, **extra_fields):
         """Create, save and return a new user."""
-
         if not email:
             raise ValueError("User must have an email address.")
-
         user = self.model(email=self.normalize_email(email), **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
@@ -28,7 +37,6 @@ class UserManager(BaseUserManager):
 
     def create_superuser(self, email, password):
         """Create and return a new superuser."""
-
         user = self.create_user(email, password)
         user.is_staff = True
         user.is_superuser = True
@@ -38,7 +46,7 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractBaseUser, PermissionsMixin):
-    """Custom user model that supports using email instead of username."""
+    """User in the system."""
 
     email = models.EmailField(max_length=255, unique=True)
     name = models.CharField(max_length=255)
@@ -57,15 +65,16 @@ class Recipe(models.Model):
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
     )
-
-    objects = models.Manager()  # Default manager.
-
     title = models.CharField(max_length=255)
     description = models.TextField(blank=True)
     time_minutes = models.IntegerField()
     price = models.DecimalField(max_digits=5, decimal_places=2)
     link = models.CharField(max_length=255, blank=True)
     tags = models.ManyToManyField("Tag")
+    ingredients = models.ManyToManyField("Ingredient")
+    image = models.ImageField(null=True, upload_to=recipe_image_file_path)
+
+    objects = models.Manager()
 
     def __str__(self):
         return str(self.title)
@@ -80,9 +89,21 @@ class Tag(models.Model):
         on_delete=models.CASCADE,
     )
 
-    objects = models.Manager()  # Default manager
+    objects = models.Manager()
 
     def __str__(self):
-        """String of object"""
+        return str(self.name)
 
+
+class Ingredient(models.Model):
+    """Ingredient for recipes."""
+
+    name = models.CharField(max_length=255)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+    )
+    objects = models.Manager()
+
+    def __str__(self):
         return str(self.name)
