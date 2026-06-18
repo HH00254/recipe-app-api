@@ -39,8 +39,14 @@ from recipe import serializers
                 OpenApiTypes.STR,
                 description="Comma separated list of ingredient IDs to filter",
             ),
-        ]
-    )
+        ],
+        tags=["recipes"],
+    ),
+    retrieve=extend_schema(tags=["recipes"]),
+    create=extend_schema(tags=["recipes"]),
+    update=extend_schema(tags=["recipes"]),
+    partial_update=extend_schema(tags=["recipes"]),
+    destroy=extend_schema(tags=["recipes"]),
 )
 class RecipeViewSet(viewsets.ModelViewSet):
     """View for manage recipe APIs."""
@@ -127,6 +133,22 @@ class BaseRecipeAttrViewSet(
         return queryset.filter(user=self.request.user).order_by("-name").distinct()
 
 
+@extend_schema_view(
+    list=extend_schema(
+        parameters=[
+            OpenApiParameter(
+                "assigned_only",
+                OpenApiTypes.INT,
+                enum=[0, 1],
+                description="Filter by items assigned to recipes.",
+            )
+        ],
+        tags=["tags"],
+    ),
+    update=extend_schema(tags=["tags"]),
+    partial_update=extend_schema(tags=["tags"]),
+    destroy=extend_schema(tags=["tags"]),
+)
 class TagViewSet(BaseRecipeAttrViewSet):
     """Manage tags in the database."""
 
@@ -134,6 +156,22 @@ class TagViewSet(BaseRecipeAttrViewSet):
     queryset = Tag.objects.all()
 
 
+@extend_schema_view(
+    list=extend_schema(
+        parameters=[
+            OpenApiParameter(
+                "assigned_only",
+                OpenApiTypes.INT,
+                enum=[0, 1],
+                description="Filter by items assigned to recipes.",
+            )
+        ],
+        tags=["ingredients"],
+    ),
+    update=extend_schema(tags=["ingredients"]),
+    partial_update=extend_schema(tags=["ingredients"]),
+    destroy=extend_schema(tags=["ingredients"]),
+)
 class IngredientViewSet(BaseRecipeAttrViewSet):
     """Manage ingredients in the database."""
 
