@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 """app URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
@@ -13,6 +14,9 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+=======
+"""app URL Configuration"""
+>>>>>>> master
 
 from django.conf import settings
 from django.conf.urls.static import static
@@ -30,7 +34,20 @@ urlpatterns = [
     ),
     path("api/user/", include("user.urls")),
     path("api/recipe/", include("recipe.urls")),
+<<<<<<< HEAD
 ]
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+=======
+    path(
+        "api/recipe/recipes/<int:recipe_pk>/comments/",
+        include("comments.urls"),
+    ),
+]
+
+# Serve media locally in development only.
+# In production, Cloudinary handles media so this block does nothing.
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=getattr(settings, "MEDIA_ROOT", ""))
+>>>>>>> master
