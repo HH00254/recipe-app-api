@@ -2,6 +2,6 @@
 builder = "nixpacks"
 
 [deploy]
-startCommand = "cd app && gunicorn app.wsgi:application --bind 0.0.0.0:$PORT --workers 2"
+startCommand = "gunicorn app.wsgi:application --chdir app --bind 0.0.0.0:$PORT --workers 2"
 healthcheckPath = "/api/docs/"
 restartPolicyType = "on_failure"
