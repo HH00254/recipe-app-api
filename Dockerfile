@@ -1,8 +1,6 @@
 FROM python:3.9-alpine3.19
 LABEL maintainer="HH00254"
 
-CMD ["/bin/sh", "-c", "python manage.py migrate --noinput && python manage.py collectstatic --noinput && gunicorn app.wsgi:application --bind 0.0.0.0:${PORT:-8000} --workers 2"]
-
 ENV PYTHONUNBUFFERED 1
 
 COPY ./requirements.txt /tmp/requirements.txt
@@ -45,3 +43,5 @@ RUN python -m venv /py && \
 ENV PATH="/py/bin:$PATH"
 
 USER django-user
+
+CMD ["/bin/sh", "-c", "python manage.py migrate --noinput && python manage.py collectstatic --noinput && gunicorn app.wsgi:application --bind 0.0.0.0:${PORT:-8000} --workers 2"]
