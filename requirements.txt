@@ -1,0 +1,10 @@
+Django>=3.2.4,<3.3
+djangorestframework>=3.12.4,<3.13
+psycopg2-binary>=2.9.9,<2.10
+drf-spectacular>=0.15.1,<0.16
+Pillow>=8.2.0,<8.3.0
+django-cors-headers>=3.13.0,<3.14
+whitenoise>=6.0.0,<6.1
+cloudinary>=1.29.0,<1.30
+django-cloudinary-storage>=0.3.0,<0.4
+gunicorn>=20.1.0,<20.2
