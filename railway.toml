@@ -1,7 +1,6 @@
 [build]
-builder = "nixpacks"
+builder = "dockerfile"
+dockerfilePath = "Dockerfile"
 
 [deploy]
-startCommand = "gunicorn app.wsgi:application --chdir app --bind 0.0.0.0:$PORT --workers 2"
-healthcheckPath = "/api/docs/"
 restartPolicyType = "on_failure"
