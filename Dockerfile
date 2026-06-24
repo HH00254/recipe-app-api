@@ -1,7 +1,7 @@
 FROM python:3.9-alpine3.19
 LABEL maintainer="HH00254"
 
-ENV PYTHONUNBUFFERED 1
+ENV PYTHONUNBUFFERED=1
 
 COPY ./requirements.txt /tmp/requirements.txt
 COPY ./requirements.dev.txt /tmp/requirements.dev.txt
@@ -37,11 +37,13 @@ RUN python -m venv /py && \
     django-user && \
     mkdir -p /vol/web/media && \
     mkdir -p /vol/web/static && \
+    mkdir -p /app/staticfiles && \
     chown -R django-user:django-user /vol && \
+    chown -R django-user:django-user /app/staticfiles && \
     chmod -R 755 /vol
 
 ENV PATH="/py/bin:$PATH"
 
 USER django-user
 
-CMD ["/bin/sh", "-c", "python manage.py migrate --noinput && python manage.py collectstatic --noinput && gunicorn app.wsgi:application --bind 0.0.0.0:${PORT:-8000} --workers 2"]
+CMD ["/bin/sh", "-c", "python manage.py migrate --noinput && python manage.py collectstatic --noinput || true && gunicorn app.wsgi:application --bind 0.0.0.0:${PORT:-8000} --workers 2"]
