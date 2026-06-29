@@ -46,4 +46,4 @@ ENV PATH="/py/bin:$PATH"
 
 USER django-user
 
-CMD ["/bin/sh", "-c", "python manage.py migrate --noinput && python manage.py collectstatic --noinput || true && gunicorn app.wsgi:application --bind 0.0.0.0:${PORT:-8000} --workers 2"]
+CMD ["/bin/sh", "-c", "python manage.py migrate --noinput && python manage.py seed_data || true && python manage.py collectstatic --noinput || true && gunicorn app.wsgi:application --bind 0.0.0.0:${PORT:-8000} --workers 2"]

@@ -29,7 +29,7 @@ class TagSerializer(serializers.ModelSerializer):
 
 
 class RecipeSerializer(serializers.ModelSerializer):
-    """Serializer for recipes."""
+    """Serializer for recipes — used in list view."""
 
     tags = TagSerializer(many=True, required=False)
     ingredients = IngredientSerializer(many=True, required=False)
@@ -44,6 +44,7 @@ class RecipeSerializer(serializers.ModelSerializer):
             "link",
             "tags",
             "ingredients",
+            "image",          # ← FIXED: image was missing from list serializer
         ]
         read_only_fields = ["id"]
 
@@ -74,7 +75,6 @@ class RecipeSerializer(serializers.ModelSerializer):
         recipe = Recipe.objects.create(**validated_data)
         self._get_or_create_tags(tags, recipe)
         self._get_or_create_ingredients(ingredients, recipe)
-
         return recipe
 
     def update(self, instance, validated_data):
@@ -99,7 +99,7 @@ class RecipeDetailSerializer(RecipeSerializer):
     """Serializer for recipe detail view."""
 
     class Meta(RecipeSerializer.Meta):
-        fields = RecipeSerializer.Meta.fields + ["description", "image"]
+        fields = RecipeSerializer.Meta.fields + ["description"]
 
 
 class RecipeImageSerializer(serializers.ModelSerializer):
